@@ -5,15 +5,21 @@ using TryXUnit;
 
 namespace MyTestProj
 {
-    public class UnitTest1
+    public class MyTests
     {
+        private Mock<MyInterface> mockedClass;
+        ToBeTested toBeTested;
+
+
+        public MyTests(){
+            mockedClass = new Mock<MyInterface>();
+            toBeTested = new ToBeTested(mockedClass.Object);
+        }
+
         [Fact]
         //This test makes sure that the method fromt he mocked class is being called.
         public void ToBeTestedMethod_Gets_Name_From_Injected_Class()
         {
-            Mock<MyInterface>  mockedClass = new Mock<MyInterface>();
-            var toBeTested = new ToBeTested(mockedClass.Object);
-
             toBeTested.ToBeTestedMethod(1);
 
             mockedClass.Verify(m => m.ReturnsName(1));
@@ -29,9 +35,7 @@ namespace MyTestProj
         {
             var expectedName = "Kiran Koirala";
             var id = 100;
-            Mock<MyInterface> injected = new Mock<MyInterface>();
-            var toBeTested = new ToBeTested(injected.Object);
-            injected.Setup(i => i.ReturnsName(id)).Returns(expectedName);
+            mockedClass.Setup(i => i.ReturnsName(id)).Returns(expectedName);
 
 
             var actualResult = toBeTested.ToBeTestedMethod(id);
@@ -47,9 +51,7 @@ namespace MyTestProj
         public void ToBeTestedMethod_throws_If_Id_Is_LessThan_1(int id)
         {
             var expectedName = "Kiran Koirala";
-            Mock<MyInterface> injected = new Mock<MyInterface>();
-            var toBeTested = new ToBeTested(injected.Object);
-            injected.Setup(i => i.ReturnsName(id)).Returns(expectedName);
+            mockedClass.Setup(i => i.ReturnsName(id)).Returns(expectedName);
 
             Assert.Throws<ArgumentException>(() => toBeTested.ToBeTestedMethod(id));
         }
@@ -60,9 +62,7 @@ namespace MyTestProj
         {
             var expectedName = "Kiran Koirala";
             var id = 0;
-            Mock<MyInterface> injected = new Mock<MyInterface>();
-            var toBeTested = new ToBeTested(injected.Object);
-            injected.Setup(i => i.ReturnsName(id)).Returns(expectedName);
+            mockedClass.Setup(i => i.ReturnsName(id)).Returns(expectedName);
 
 
             var exception = Assert.Throws<ArgumentException>(() => toBeTested.ToBeTestedMethod(id));
